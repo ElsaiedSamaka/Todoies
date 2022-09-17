@@ -53,7 +53,9 @@ export default function Home() {
                             <button
                               type="button"
                               className="btn btn-primary"
-                              onClick={handleClick}
+                              onClick={() => {
+                                todo && handleClick();
+                              }}
                             >
                               Add
                             </button>
