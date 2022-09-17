@@ -1,9 +1,21 @@
 import Head from "next/head";
+import { useState } from "react";
 import FilterComponent from "../components/FilterComponent";
 import TodoList from "../components/TodoList";
 import todos from "../utils/todos";
 
 export default function Home() {
+  const [todosList, setTodos] = useState(todos);
+  const [todo, setTodo] = useState("");
+  const handleChange = (e) => {
+    e.preventDefault();
+    setTodo(e.target.value);
+  };
+  const handleClick = () => {
+    let lastTodo = todosList[todosList.length - 1];
+    setTodos([...todosList, { id: Number(lastTodo.id) + 1, title: todo }]);
+    setTodo("");
+  };
   return (
     <div>
       <Head>
@@ -31,12 +43,18 @@ export default function Home() {
                             className="form-control form-control-lg"
                             id="exampleFormControlInput1"
                             placeholder="Add new..."
+                            value={todo}
+                            onChange={handleChange}
                           />
                           <a href="#!" title="Set due date">
                             <i className="bi-calendar  me-3"></i>
                           </a>
                           <div>
-                            <button type="button" className="btn btn-primary">
+                            <button
+                              type="button"
+                              className="btn btn-primary"
+                              onClick={handleClick}
+                            >
                               Add
                             </button>
                           </div>
@@ -46,7 +64,7 @@ export default function Home() {
                   </div>
                   <hr className="my-4" />
                   <FilterComponent />
-                  <TodoList todoslist={ todos } />
+                  <TodoList todoslist={todosList} />
                 </div>
               </div>
             </div>
