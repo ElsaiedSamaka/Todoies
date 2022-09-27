@@ -1,4 +1,34 @@
+import { useState } from "react";
+import TodoStatus from "../utils/helper";
+
 const TodoItem = ({ todo }) => {
+  const [todoState, setTodoState] = useState(todo);
+  const handleTodoState = () => {
+    if (todoState.status === TodoStatus.Active) {
+      setTodoState({ ...todoState, status: TodoStatus.Snoozed });
+    } else if (todoState.status === TodoStatus.Snoozed) {
+      setTodoState({ ...todoState, status: TodoStatus.Active });
+    }
+  };
+
+  const handleIsCompleted = () => {
+    if (todoState.status === TodoStatus.Active) {
+      setTodoState({ ...todoState, status: TodoStatus.Completed });
+    } else if (todoState.status === TodoStatus.Completed) {
+      setTodoState({ ...todoState, status: TodoStatus.Active });
+    }
+  };
+
+  const [todoTitle, setTodo] = useState(todoState.title);
+  const handleChange = (e) => {
+    setTodo(e.target.value);
+  };
+
+  const [isEditable, setEditable] = useState(false);
+  const handleIsEditable = () => {
+    setEditable(!isEditable);
+  };
+
   return (
     <ul className="list-group list-group-horizontal rounded-0">
       <li className="list-group-item d-flex align-items-center ps-0 pe-3 py-1 rounded-0 border-0 bg-transparent">
@@ -6,25 +36,98 @@ const TodoItem = ({ todo }) => {
           <input
             className="form-check-input me-0"
             type="checkbox"
-            value=""
             id="flexCheckChecked2"
             aria-label="..."
-            checked={true}
+            onClick={handleIsCompleted}
           />
         </div>
       </li>
       <li className="list-group-item px-3 py-1 d-flex align-items-center flex-grow-1 border-0 bg-transparent">
-        <p className="lead fw-normal mb-0">
-          <strong> todo </strong>: {todo.title}
-        </p>
+        <div class="input-group">
+          {isEditable ? (
+            <>
+              {" "}
+              <input
+                type="text"
+                className={`form-control lead fw-normal text-monospace  ${
+                  todoState.status === TodoStatus.Completed
+                    ? "text-decoration-line-through"
+                    : ""
+                } ${
+                  todoState.status === TodoStatus.Snoozed ? "text-muted" : ""
+                } mb-0`}
+                placeholder="edit todo"
+                aria-label="Edit Todo"
+                aria-describedby="basic-addon2"
+                value={todoTitle}
+                onChange={handleChange}
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-lg btn-outline-success mx-2"
+                  type="button"
+                >
+                  <i
+                    className="bi-save"
+                    onClick={() => {
+                      setTodoState({ ...todoState, title: todoTitle });
+                      setEditable(!isEditable);
+                    }}
+                  ></i>
+                </button>
+                <button
+                  class="btn btn-lg btn-outline-danger mx-2"
+                  type="button"
+                >
+                  <i
+                    className=""
+                    onClick={() => {
+                      setTodo("");
+                      setTodoState({ ...todoState, title: todoTitle });
+                      setEditable(!isEditable);
+                    }}
+                  >
+                    X
+                  </i>
+                </button>
+              </div>
+            </>
+          ) : (
+            <p
+              className={`lead fw-normal text-monospace  ${
+                todoState.status === TodoStatus.Completed
+                  ? "text-decoration-line-through"
+                  : ""
+              }  ${
+                todoState.status === TodoStatus.Snoozed ? "text-muted" : ""
+              } mb-0`}
+            >
+              {todoState.title}
+            </p>
+          )}
+        </div>
       </li>
       <li className="list-group-item px-3 py-1 d-flex align-items-center border-0 bg-transparent">
-        <div className="py-2 px-3 me-2 border border-warning rounded-3 d-flex align-items-center bg-light">
-          <p className="small mb-0">
-            <a href="#!" data-mdb-toggle="tooltip" title="Due on date">
-              <i className="bi-hourglass me-2 text-warning"></i>
+        <div
+          className={`py-2 px-3 me-2 border ${
+            todoState.status === TodoStatus.Snoozed
+              ? "border-warning"
+              : todoState.status === TodoStatus.Active
+              ? "border-success"
+              : todoState.Completed === TodoStatus.Completed
+              ? "border-info"
+              : ""
+          } rounded-3 d-flex align-items-center bg-light`}
+        >
+          <p className="small mb-0 ">
+            <a
+              className="btn"
+              data-mdb-toggle="tooltip"
+              title="Change state"
+              onClick={handleTodoState}
+            >
+              <i className="mx-auto bi-hourglass text-primary"></i>
             </a>
-            28th Jun 2020
           </p>
         </div>
       </li>
@@ -36,7 +139,7 @@ const TodoItem = ({ todo }) => {
             data-mdb-toggle="tooltip"
             title="Edit todo"
           >
-            <i className="bi-pencil-alt me-3"></i>
+            <i className="bi-pencil me-3" onClick={handleIsEditable}></i>
           </a>
           <a
             href="#!"
@@ -55,7 +158,8 @@ const TodoItem = ({ todo }) => {
             title="Created date"
           >
             <p className="small mb-0">
-              <i className="bi-info-circle me-2"></i>28th Jun 2020
+              <i className="bi-info me-2"></i>
+              {String(todoState.date)}
             </p>
           </a>
         </div>

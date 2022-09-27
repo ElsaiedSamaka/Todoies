@@ -1,1 +1,8 @@
-[{ "id": "0", "title": "lorem ipsum dolor sit amet, consectetur adip" }]
+[
+  {
+    "id": "0",
+    "title": "lorem ipsum dolor sit amet, consectetur adip",
+    "date": "21/3/1997",
+    "status": "Active"
+  }
+]

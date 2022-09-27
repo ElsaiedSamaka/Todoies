@@ -2,18 +2,27 @@ import Head from "next/head";
 import { useState } from "react";
 import FilterComponent from "../components/FilterComponent";
 import TodoList from "../components/TodoList";
+import TodoStatus from "../utils/helper";
 import todos from "../utils/todos";
 
 export default function Home() {
   const [todosList, setTodos] = useState(todos);
   const [todo, setTodo] = useState("");
   const handleChange = (e) => {
-    e.preventDefault();
     setTodo(e.target.value);
   };
-  const handleClick = () => {
-    let lastTodo = todosList[todosList.length - 1];
-    setTodos([...todosList, { id: Number(lastTodo.id) + 1, title: todo }]);
+
+  const handleAddTodo = () => {
+    let todayDate = new Date().toLocaleDateString();
+    setTodos([
+      ...todosList,
+      {
+        id: Math.floor(Math.random() * 100),
+        title: todo,
+        date: todayDate,
+        status: TodoStatus.Active,
+      },
+    ]);
     setTodo("");
   };
   return (
@@ -40,11 +49,14 @@ export default function Home() {
                         <div className="d-flex flex-row align-items-center">
                           <input
                             type="text"
+                            required={true}
                             className="form-control form-control-lg"
                             id="exampleFormControlInput1"
                             placeholder="Add new..."
                             value={todo}
                             onChange={handleChange}
+                            minLength="6"
+                            maxLength="60"
                           />
                           <a href="#!" title="Set due date">
                             <i className="bi-calendar  me-3"></i>
@@ -53,8 +65,9 @@ export default function Home() {
                             <button
                               type="button"
                               className="btn btn-primary"
+                              //only when user submit a todo string then add todo
                               onClick={() => {
-                                todo && handleClick();
+                                todo && handleAddTodo();
                               }}
                             >
                               Add
